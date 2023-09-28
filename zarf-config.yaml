@@ -6,4 +6,4 @@ package:
       name: big-bang-aws
       domain: bigbang.dev
       #admin_domain: admin.bigbang.dev
-      #role_arn_annotation: "eks.amazonaws.com/role-arn: arn:aws:iam::000000000000:role/iamserviceaccount-role"
+      role_arn_annotation: "arn:aws:iam::000000000000:role/iamserviceaccount-role"

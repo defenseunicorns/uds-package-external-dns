@@ -23,4 +23,4 @@ serviceAccount:
   create: true
   annotations:
     ###ZARF_VAR_ROLE_ARN_ANNOTATION###
-    #role_arn_annotation: "eks.amazonaws.com/role-arn: arn:aws:iam::000000000000:role/iamserviceaccount-role
+    #eks.amazonaws.com/role-arn: arn:aws:iam::000000000000:role/iamserviceaccount-role

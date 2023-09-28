@@ -16,8 +16,11 @@ variables:
     default: "bigbang.dev"
   - name: ADMIN_DOMAIN
     description: "Name of domain to use for the admin DNS zone"
+  - name: ROLE_ARN_ANNOTATION_KEY
+    description: "Service account annotation key for AWS role arn"
+    default: "eks.amazonaws.com/role-arn"
   - name: ROLE_ARN_ANNOTATION
-    description: "Service account annotation for AWS role arn (example: `role_arn_annotation: eks.amazonaws.com/role-arn: arn:aws:iam::000000000000:role/iamserviceaccount-role`)"
+    description: "Service account annotation value for AWS role arn (example: `arn:aws:iam::000000000000:role/iamserviceaccount-role`)"
   - name: PROVIDER
     description: "External DNS provider (will default to `inmemory` if value not set and ROLE_ARN_ANNOTATION not provided)"
   - name: SOURCES
@@ -70,7 +73,7 @@ components:
               - name: SOURCES
           - cmd: |
               if [ "${ZARF_VAR_PROVIDER}" = "aws" ]; then
-                echo "extraArgs: ["--aws-prefer-cname"]"
+                echo "extraArgs: ['--aws-prefer-cname']"
               else
                 echo ""
               fi
@@ -79,13 +82,12 @@ components:
             setVariables:
               - name: EXTRA_ARGS
           - cmd: |
-              echo "${ZARF_VAR_ROLE_ARN_ANNOTATION:-}"
-              #if [ -z "${ZARF_VAR_ROLE_ARN_ANNOTATION}" ]; then
-              #  echo ""
-              #else
-              #  echo "${ZARF_VAR_ROLE_ARN_ANNOTATION}"
-              #fi
-            description: "Set external-dns route53 role arn annotation Zarf variable"
+              if [ -z "${ZARF_VAR_ROLE_ARN_ANNOTATION}" ]; then
+                echo ""
+              else
+                echo "${ZARF_VAR_ROLE_ARN_ANNOTATION_KEY}: ${ZARF_VAR_ROLE_ARN_ANNOTATION}"
+              fi
+            description: "Set external-dns role arn annotation Zarf variable"
             mute: true
             setVariables:
               - name: ROLE_ARN_ANNOTATION
