@@ -1,0 +1,9 @@
+package:
+  create:
+    max_package_size: "999"
+  deploy:
+    set:
+      name: big-bang-aws
+      domain: bigbang.dev
+      #admin_domain: admin.bigbang.dev
+      #role_arn_annotation: "eks.amazonaws.com/role-arn: arn:aws:iam::000000000000:role/iamserviceaccount-role"
