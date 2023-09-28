@@ -1,0 +1,113 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
+kind: ZarfPackageConfig
+metadata:
+  name: external-dns-helm-chart
+  description: "External DNS Helm Chart"
+  # x-release-please-start-version
+  version: "0.10.0"
+  # x-release-please-end
+  url: https://github.com/kubernetes-sigs/external-dns
+  # Big Bang / Iron Bank are only amd64
+  architecture: amd64
+
+variables:
+  - name: DOMAIN
+    description: "Name of domain to use for either the tenant only or tenant + admin DNS zone(s)"
+    default: "bigbang.dev"
+  - name: ADMIN_DOMAIN
+    description: "Name of domain to use for the admin DNS zone"
+  - name: ROLE_ARN_ANNOTATION
+    description: "Service account annotation for AWS role arn (example: `role_arn_annotation: eks.amazonaws.com/role-arn: arn:aws:iam::000000000000:role/iamserviceaccount-role`)"
+  - name: PROVIDER
+    description: "External DNS provider (will default to `inmemory` if value not set and ROLE_ARN_ANNOTATION not provided)"
+  - name: SOURCES
+    description: "Cluster sources for DNS names (will default to `istio-virtualservice` unless using `inmemory` provider)"
+  - name: EXTRA_ARGS
+    description: "Extra arguments for the external-dns container (set when using AWS as a provider)"
+  - name: EXTERNAL_DNS_VALUES
+    description: "Path to a local values file that includes configuration to be used at deploy time (does not support modifying images)"
+    default: deploy-external-dns-values.yaml
+    prompt: false
+    type: file
+    autoIndent: true
+
+components:
+  - name: set-zarf-variables
+    required: true
+    actions:
+      onDeploy:
+        after:
+          - cmd: |
+              if [ -z "${ZARF_VAR_ADMIN_DOMAIN}" ]; then
+                echo "${ZARF_VAR_DOMAIN}"
+              else
+                echo "${ZARF_VAR_DOMAIN}\", \"${ZARF_VAR_ADMIN_DOMAIN}"
+              fi
+            description: "Set external-dns domain list Zarf variable"
+            mute: true
+            setVariables:
+              - name: DOMAIN_LIST
+          - cmd: |
+              if [ -z "${ZARF_VAR_ROLE_ARN_ANNOTATION}" ]; then
+                # if variable is not provided, defaults to `inmemory`
+                echo "${ZARF_VAR_PROVIDER:-inmemory}"
+              else
+                echo "aws"
+              fi
+            description: "Set external-dns provider Zarf variable"
+            mute: true
+            setVariables:
+              - name: PROVIDER
+          - cmd: |
+              if [ "${ZARF_VAR_PROVIDER}" = "inmemory" ]; then
+                echo "service"
+              else
+                echo "istio-virtualservice"
+              fi
+            description: "Set external-dns sources Zarf variable"
+            mute: true
+            setVariables:
+              - name: SOURCES
+          - cmd: |
+              if [ "${ZARF_VAR_PROVIDER}" = "aws" ]; then
+                echo "extraArgs: ["--aws-prefer-cname"]"
+              else
+                echo ""
+              fi
+            description: "Set external-dns extra args Zarf variable"
+            mute: true
+            setVariables:
+              - name: EXTRA_ARGS
+          - cmd: |
+              echo "${ZARF_VAR_ROLE_ARN_ANNOTATION:-}"
+              #if [ -z "${ZARF_VAR_ROLE_ARN_ANNOTATION}" ]; then
+              #  echo ""
+              #else
+              #  echo "${ZARF_VAR_ROLE_ARN_ANNOTATION}"
+              #fi
+            description: "Set external-dns route53 role arn annotation Zarf variable"
+            mute: true
+            setVariables:
+              - name: ROLE_ARN_ANNOTATION
+  - name: external-dns-k8s-manifests
+    required: true
+    manifests:
+      - name: k8s-manifests
+        files:
+          - k8s-manifests/external-dns-ns.yaml
+  - name: external-dns-chart
+    required: true
+    charts:
+      # https://artifacthub.io/packages/helm/external-dns/external-dns
+      # renovate: datasource=helm
+      - name: external-dns
+        url: https://kubernetes-sigs.github.io/external-dns
+        version: 1.13.1
+        namespace: external-dns
+        releaseName: external-dns
+        valuesFiles:
+          - values/external-dns.yaml
+          - values/deploy-external-dns-values.yaml
+    images:
+      # renovate: datasource=docker
+      - "registry1.dso.mil/ironbank/external-dns:v0.13.4"
