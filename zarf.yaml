@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/defenseunicorns/zarf/main/zarf.schema.json
 kind: ZarfPackageConfig
 metadata:
-  name: external-dns-helm-chart
-  description: "External DNS Helm Chart"
+  name: external-dns
+  description: "Zarf Package for External DNS"
   # x-release-please-start-version
-  version: "0.10.0"
+  version: "0.0.1"
   # x-release-please-end
   url: https://github.com/kubernetes-sigs/external-dns
   # Big Bang / Iron Bank are only amd64
