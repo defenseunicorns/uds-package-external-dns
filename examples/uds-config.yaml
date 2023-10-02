@@ -14,3 +14,4 @@ bundle:
       external-dns:
         set:
           name: k3d-k3s-default
+          external_dns_values: k3d-deploy-external-dns-values.yaml

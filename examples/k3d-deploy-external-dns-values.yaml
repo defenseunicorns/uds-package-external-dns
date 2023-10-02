@@ -1,0 +1,8 @@
+sources: ["service"]
+
+provider: inmemory
+
+extraArgs: null
+
+serviceAccount:
+  annotations: null
