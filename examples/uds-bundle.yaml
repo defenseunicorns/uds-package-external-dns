@@ -12,7 +12,7 @@ zarf-packages:
       - git-server
   - name: dubbd-k3d
     repository: ghcr.io/defenseunicorns/packages/dubbd-k3d
-    ref: "0.10.0"
+    ref: "0.10.1"
     exports:
       - name: DOMAIN
   - name: external-dns
