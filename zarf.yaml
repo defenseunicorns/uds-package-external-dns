@@ -91,6 +91,21 @@ components:
             mute: true
             setVariables:
               - name: ROLE_ARN_ANNOTATION
+  - name: set-external-dns-values
+    required: true
+    files:
+      - source: deploy-external-dns-values.yaml
+        target: deploy-external-dns-values.yaml
+    actions:
+      onDeploy:
+        after:
+          - cmd: "cat ${ZARF_VAR_EXTERNAL_DNS_VALUES}"
+            description: "Read deploy-external-dns-values.yaml file into values"
+            mute: true
+            setVariables:
+              - name: EXTERNAL_DNS_VALUES
+                sensitive: true
+                autoIndent: true
   - name: external-dns-k8s-manifests
     required: true
     manifests:
