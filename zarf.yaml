@@ -112,6 +112,12 @@ components:
       - name: k8s-manifests
         files:
           - k8s-manifests/external-dns-ns.yaml
+    actions:
+      onDeploy:
+        before:
+          - cmd: |
+              ./zarf tools kubectl label ns -l app.kubernetes.io/part-of=uds-package-external-dns zarf.dev/agent-
+            description: "Remove Zarf ignore namespace labels before deploying"
   - name: external-dns-chart
     required: true
     charts:
