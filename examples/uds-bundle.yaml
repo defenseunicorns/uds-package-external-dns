@@ -2,7 +2,7 @@ kind: UDSBundle
 metadata:
   name: external-dns-for-dubbd-k3d
   description: Building DUBBD with external-dns for local k3d
-  version: 0.0.1
+  version: "0.0.2"   # x-release-please-version
 
 zarf-packages:
   - name: init
@@ -17,7 +17,7 @@ zarf-packages:
       - name: DOMAIN
   - name: external-dns
     repository: ghcr.io/defenseunicorns/packages/external-dns
-    ref: "0.0.1" # x-release-please-version
+    ref: "0.0.2"   # x-release-please-version
     imports:
       - name: DOMAIN
         package: dubbd-k3d
