@@ -17,7 +17,7 @@ zarf-packages:
       - name: DOMAIN
   - name: external-dns
     repository: ghcr.io/defenseunicorns/packages/external-dns
-    ref: "0.0.1"
+    ref: "0.0.1" # x-release-please-version
     imports:
       - name: DOMAIN
         package: dubbd-k3d
