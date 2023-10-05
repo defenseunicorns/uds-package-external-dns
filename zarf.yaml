@@ -4,7 +4,7 @@ metadata:
   name: external-dns
   description: "Zarf Package for External DNS"
   # x-release-please-start-version
-  version: "0.0.2"
+  version: "0.1.0"
   # x-release-please-end
   url: https://github.com/kubernetes-sigs/external-dns
   # Big Bang / Iron Bank are only amd64
