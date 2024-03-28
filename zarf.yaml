@@ -133,4 +133,4 @@ components:
           - values/deploy-external-dns-values.yaml
     images:
       # renovate: datasource=docker
-      - registry1.dso.mil/ironbank/external-dns:v0.13.4
+      - registry1.dso.mil/ironbank/external-dns:v0.14.1
